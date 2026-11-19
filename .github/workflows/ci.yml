@@ -39,7 +39,7 @@ jobs:
           npm install --prefix "$RUNNER_TEMP/lmteavm-compiler" @lmctl-ai/lmctl@0.2.482
           echo "$RUNNER_TEMP/lmteavm-compiler/node_modules/.bin" >> "$GITHUB_PATH"
           echo "LMCODE_COMPILER_MODULE=$RUNNER_TEMP/lmteavm-compiler/node_modules/@lmctl-ai/lmctl/dist/dsl.js" >> "$GITHUB_ENV"
-          lmscript --version
+          "$RUNNER_TEMP/lmteavm-compiler/node_modules/.bin/lmscript" --version
       - name: Install the LMCode Java runtime
         run: mvn -q -f lmcode-java/pom.xml -DskipTests install
       - name: Build TeaVM and LMCode

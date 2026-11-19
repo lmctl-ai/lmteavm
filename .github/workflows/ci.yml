@@ -41,7 +41,8 @@ jobs:
           echo "LMCODE_COMPILER_MODULE=$RUNNER_TEMP/lmteavm-compiler/node_modules/@lmctl-ai/lmctl/dist/dsl.js" >> "$GITHUB_ENV"
           "$RUNNER_TEMP/lmteavm-compiler/node_modules/.bin/lmscript" --version
       - name: Install the LMCode Java runtime
-        run: mvn -q -f lmcode-java/pom.xml -DskipTests install
+        working-directory: lmcode-java
+        run: mvn -q -DskipTests install
       - name: Build TeaVM and LMCode
         run: mvn -f lmteavm/pom.xml clean package
       - name: Install browser test dependencies

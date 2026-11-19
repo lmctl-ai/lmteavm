@@ -8,7 +8,7 @@ Requirements: Java 21, Maven, Node 24.15 or newer, and `lmscript` from `@lmctl-a
 
 ```sh
 git clone https://github.com/lmctl-ai/lmcode-java.git
-mvn -f lmcode-java/pom.xml -DskipTests install
+(cd lmcode-java && mvn -DskipTests install)
 npm install --prefix compiler @lmctl-ai/lmctl@0.2.482
 export PATH="$PWD/compiler/node_modules/.bin:$PATH"
 export LMCODE_COMPILER_MODULE="$PWD/compiler/node_modules/@lmctl-ai/lmctl/dist/dsl.js"

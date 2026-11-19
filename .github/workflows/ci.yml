@@ -1,0 +1,52 @@
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+jobs:
+  browser-integration:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          path: lmteavm
+          persist-credentials: false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          repository: lmctl-ai/lmcode-java
+          path: lmcode-java
+          persist-credentials: false
+      - uses: graalvm/setup-graalvm@27b360dbb857524eaf0b4c4cef364d38e5b4f173
+        with:
+          java-version: '21'
+          distribution: graalvm-community
+          cache: maven
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 24.15
+      - name: Install the published LMCode compiler
+        run: |
+          npm install --prefix "$RUNNER_TEMP/lmteavm-compiler" @lmctl-ai/lmctl@0.2.482
+          echo "$RUNNER_TEMP/lmteavm-compiler/node_modules/.bin" >> "$GITHUB_PATH"
+          echo "LMCODE_COMPILER_MODULE=$RUNNER_TEMP/lmteavm-compiler/node_modules/@lmctl-ai/lmctl/dist/dsl.js" >> "$GITHUB_ENV"
+          lmscript --version
+      - name: Install the LMCode Java runtime
+        run: mvn -q -f lmcode-java/pom.xml -DskipTests install
+      - name: Build TeaVM and LMCode
+        run: mvn -f lmteavm/pom.xml clean package
+      - name: Install browser test dependencies
+        run: |
+          npm ci --prefix lmteavm
+          npx --prefix lmteavm playwright install --with-deps chromium
+      - name: Run browser integration tests
+        run: npm test --prefix lmteavm

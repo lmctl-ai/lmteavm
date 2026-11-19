@@ -1,0 +1,16 @@
+{
+  "name": "lmteavm",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=24.15.0"
+  },
+  "scripts": {
+    "test": "node tests/browser.mjs",
+    "test:integration": "node tests/browser.mjs"
+  },
+  "devDependencies": {
+    "playwright": "1.65.1"
+  }
+}
